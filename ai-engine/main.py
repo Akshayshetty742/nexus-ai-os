@@ -1,30 +1,29 @@
+from fastapi import FastAPI
+from pydantic import BaseModel
 import google.generativeai as genai
-from pypdf import PdfReader
-import json
 import os
+from dotenv import load_dotenv
 
-# Get API key from environment (safer)
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "YOUR_KEY_HERE")
+load_dotenv()
 
-genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel('gemini-pro')
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-def generate_study_plan(pdf_path):
-    """PDF File -> JSON Schedule"""
-    reader = PdfReader(pdf_path)
-    text = ""
-    for page in reader.pages:
-        text += page.extract_text() or ""
-    
-    prompt = f"""
-    Extract dates from syllabus. Return ONLY JSON array.
-    Format: [{{"title": "Midterm", "date": "2025-09-15", "type": "exam"}}]
-    Text: {text[:9000]}
-    """
-    
-    response = model.generate_content(prompt)
-    clean = response.text.replace("```json", "").replace("```", "").strip()
-    return json.loads(clean)
+# ✅ THIS MODEL WORKS WITH THIS VERSION
+model = genai.GenerativeModel("gemini-pro")
 
-if __name__ == "__main__":
-    print("AI Brain Ready!")
+app = FastAPI()
+
+class Input(BaseModel):
+    text: str
+
+@app.get("/")
+def home():
+    return {"message": "AI Engine Running 🚀"}
+
+@app.post("/generate")
+def generate_text(input: Input):
+    try:
+        response = model.generate_content(input.text)
+        return {"result": response.text}
+    except Exception as e:
+        return {"error": str(e)}

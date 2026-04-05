@@ -2,12 +2,16 @@ export interface CalendarEvent {
   id: string;
   title: string;
   date: Date;
-  type: 'exam' | 'hackathon' | 'study-block' | 'holiday';
+  type: 'exam' | 'hackathon' | 'study-block' | 'holiday' | 'study' | 'completed'; // 🔥 ADD THESE
   registered?: boolean;
   registrationDate?: Date;
   daysUnregistered?: number;
+  taskId?: string; // 🔥 ADD THIS LINE
 }
-
+type HabitMatrixProps = {
+  habits: Habit[];
+  onToggle: (id: string) => void;
+};
 export interface Task {
   id: string;
   title: string;
@@ -49,15 +53,13 @@ export interface SparkTask {
   benefit: string;
 }
 
-export interface Habit {
+export type Habit = {
   id: string;
-  title: string;
+  name: string;
   icon: string;
   color: string;
-  streak: number;
-  lastCompleted?: string; // ISO date string
-  history: string[]; // List of ISO date strings (YYYY-MM-DD)
-}
+  completedDates: string[];
+};
 
 export interface HabitLog {
   [habitId: string]: string[]; // habitId -> array of completed dates

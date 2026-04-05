@@ -1,0 +1,17 @@
+FROM node:18
+
+WORKDIR /app
+
+# Copy backend
+COPY backend ./backend
+
+# Copy frontend build
+COPY frontend/dist ./frontend/dist
+
+# Install dependencies
+WORKDIR /app/backend
+RUN npm install
+
+EXPOSE 8080
+
+CMD ["node", "index.js"]

@@ -30,6 +30,8 @@ export const HabitMatrix: React.FC<HabitMatrixProps> = ({ habits, onToggle }) =>
     start: subDays(new Date(), 6),
     end: new Date()
   });
+  
+  const today = new Date().toDateString();
 
   return (
     <div className="space-y-6">
@@ -48,83 +50,53 @@ export const HabitMatrix: React.FC<HabitMatrixProps> = ({ habits, onToggle }) =>
       <div className="grid grid-cols-1 gap-4">
         {habits.map((habit) => {
           const Icon = ICON_MAP[habit.icon] || Terminal;
-          const isCompletedToday = habit.history.includes(format(new Date(), 'yyyy-MM-dd'));
+          const isCompletedToday = habit.completedDates.includes(today);
 
           return (
             <motion.div
               key={habit.id}
-              layout
-              className="glass-card glass-border rounded-3xl p-6 flex flex-col md:flex-row items-center gap-6 group hover:border-cyan-500/30 transition-all"
+              className="glass-card glass-border rounded-3xl p-6 flex flex-col md:flex-row items-center gap-6"
             >
               <div className="flex items-center gap-4 w-full md:w-1/3">
-                <div className={cn(
-                  "w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-lg transition-transform duration-500 group-hover:rotate-6",
-                  habit.color === 'cyan' ? "bg-gradient-to-br from-cyan-500 to-blue-600" :
-                  habit.color === 'blue' ? "bg-gradient-to-br from-blue-500 to-indigo-600" :
-                  "bg-gradient-to-br from-emerald-500 to-teal-600"
-                )}>
+                <div
+                  className={cn(
+                    "w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-lg",
+                    habit.color === "cyan"
+                      ? "bg-gradient-to-br from-cyan-500 to-blue-600"
+                      : habit.color === "blue"
+                      ? "bg-gradient-to-br from-blue-500 to-indigo-600"
+                      : "bg-gradient-to-br from-emerald-500 to-teal-600"
+                  )}
+                >
                   <Icon size={28} />
                 </div>
+
                 <div>
-                  <h3 className="text-lg font-bold text-slate-100">{habit.title}</h3>
+                  <h3 className="text-lg font-bold text-slate-100">
+                    {habit.name}
+                  </h3>
+
                   <div className="flex items-center gap-2 mt-1">
-                    <Flame size={14} className={cn(habit.streak > 0 ? "text-orange-500" : "text-slate-600")} />
-                    <span className={cn(
-                      "text-xs font-bold uppercase tracking-widest",
-                      habit.streak > 0 ? "text-orange-400" : "text-slate-600"
-                    )}>
-                      {habit.streak} Day Streak
+                    <Flame
+                      size={14}
+                      className={cn(
+                        habit.completedDates.length > 0
+                          ? "text-orange-500"
+                          : "text-slate-600"
+                      )}
+                    />
+
+                    <span className="text-xs font-bold uppercase tracking-widest">
+                      {habit.completedDates.length} Day Streak
                     </span>
-                    {habit.streak >= 5 && (
-                      <span className="ml-2 px-2 py-0.5 rounded bg-yellow-500/20 text-yellow-500 text-[8px] font-black uppercase tracking-tighter flex items-center gap-1">
-                        <Trophy size={8} /> Elite
+
+                    {habit.completedDates.length >= 5 && (
+                      <span className="ml-2 px-2 py-0.5 rounded bg-yellow-500/20 text-yellow-500 text-[8px] font-black">
+                        Elite
                       </span>
                     )}
                   </div>
                 </div>
-              </div>
-
-              <div className="flex-1 flex items-center justify-between w-full">
-                <div className="flex gap-2">
-                  {last7Days.map((date, i) => {
-                    const isCompleted = habit.history.includes(format(date, 'yyyy-MM-dd'));
-                    const isToday = isSameDay(date, new Date());
-                    
-                    return (
-                      <div key={i} className="flex flex-col items-center gap-1">
-                        <div className={cn(
-                          "w-8 h-8 rounded-lg flex items-center justify-center transition-all",
-                          isCompleted 
-                            ? "bg-cyan-500/20 text-cyan-400 border border-cyan-500/30" 
-                            : "bg-slate-900/50 text-slate-700 border border-white/5",
-                          isToday && !isCompleted && "border-white/20"
-                        )}>
-                          {isCompleted ? <CheckCircle2 size={16} /> : <Circle size={12} />}
-                        </div>
-                        <span className="text-[8px] font-bold text-slate-600 uppercase">{format(date, 'EEE')}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                <button
-                  onClick={() => onToggle(habit.id)}
-                  className={cn(
-                    "px-6 py-3 rounded-2xl font-bold text-sm transition-all flex items-center gap-2",
-                    isCompletedToday
-                      ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
-                      : "bg-cyan-600 text-white hover:bg-cyan-500 shadow-lg shadow-cyan-600/20"
-                  )}
-                >
-                  {isCompletedToday ? (
-                    <>
-                      <CheckCircle2 size={18} />
-                      Completed
-                    </>
-                  ) : (
-                    "Complete Today"
-                  )}
-                </button>
               </div>
             </motion.div>
           );
