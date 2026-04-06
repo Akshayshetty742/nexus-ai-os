@@ -25,13 +25,16 @@ app.post("/api/mentor", async (req, res) => {
     }
 
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash",
+      model: "gemini-1.5-flash-latest",
     });
 
-    const result = await model.generateContent(
-      `You are a helpful student mentor.\n${message}`
-    );
-
+   const result = await model.generateContent({
+  contents: [
+    {
+      parts: [{ text: `You are a helpful student mentor.\n${message}` }]
+    }
+  ]
+});
     const text = result.response.text();
 
     res.json({
