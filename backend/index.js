@@ -38,12 +38,14 @@ app.post("/api/mentor", async (req, res) => {
       reply: text || "No response",
     });
 
-  } catch (error) {
-    console.error("Gemini Error:", error);
-    res.status(500).json({
-      reply: "Error generating response",
-    });
-  }
+  }catch (error) {
+  console.error("🔥 GEMINI FULL ERROR:", error);
+
+  res.status(500).json({
+    reply: "Error generating response",
+    error: error.message,
+  });
+}
 });
 
 // Root check
@@ -55,3 +57,4 @@ app.get("/", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
