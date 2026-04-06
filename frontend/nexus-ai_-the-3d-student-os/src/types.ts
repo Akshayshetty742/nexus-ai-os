@@ -8,10 +8,6 @@ export interface CalendarEvent {
   daysUnregistered?: number;
   taskId?: string; // 🔥 ADD THIS LINE
 }
-type HabitMatrixProps = {
-  habits: Habit[];
-  onToggle: (id: string) => void;
-};
 export interface Task {
   id: string;
   title: string;
@@ -53,6 +49,12 @@ export interface SparkTask {
   benefit: string;
 }
 
+
+
+export interface HabitLog {
+  [habitId: string]: string[]; // habitId -> array of completed dates
+}
+
 export type Habit = {
   id: string;
   name: string;
@@ -60,7 +62,3 @@ export type Habit = {
   color: string;
   completedDates: string[];
 };
-
-export interface HabitLog {
-  [habitId: string]: string[]; // habitId -> array of completed dates
-}
